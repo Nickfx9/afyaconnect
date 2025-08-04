@@ -27,8 +27,9 @@ const AboutUsSection = () => {
             AfyaConnect is a transformative digital health platform connecting
             communities across Kenya with global telemedicine partners,
             unlocking quality healthcare access through technology. Whether
-            it's remote consultations, health tracking, or community health
-            worker support, we're here to bring healthcare closer to everyone.
+            it&apos;s remote consultations, health tracking, or community health
+worker support, we&apos;re here to bring healthcare closer to everyone.
+
           </motion.p>
 
           <motion.div
