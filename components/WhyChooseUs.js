@@ -1,10 +1,13 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import { FaCheckCircle, FaStethoscope, FaLock, FaClock } from "react-icons/fa";
 
 export default function WhyChooseUs() {
   return (
     <section className="w-full bg-gradient-to-r from-blue-900 to-blue-700 relative py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Side - Image */}
         <div className="relative rounded-2xl overflow-hidden backdrop-blur-md bg-white/10 p-6 shadow-xl border border-white/20">
@@ -36,7 +39,7 @@ export default function WhyChooseUs() {
               </div>
             </li>
             <li className="flex items-start bg-white/10 p-5 rounded-xl backdrop-blur-sm hover:scale-[1.02] transition-transform duration-200">
-              <FaCheckCircle className="text-blue-300844 mr-3 mt-1" aria-hidden="true" />
+              <FaCheckCircle className="text-blue-300 mr-3 mt-1" aria-hidden="true" />
               <div>
                 <strong className="font-semibold">Accessible & Affordable</strong>
                 <p>Quality care that fits your schedule and budget.</p>
@@ -58,22 +61,24 @@ export default function WhyChooseUs() {
             </li>
           </ul>
 
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <button
-              className="inline-block px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-100 hover:shadow-lg transition-all duration-200"
+              className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-100 hover:shadow-lg transition-all duration-200"
               aria-label="Start your telemedicine consultation"
             >
               Start Your Consultation
             </button>
-            <button
-              className="inline-block px-8 py-3 bg-transparent border border-white text-white font-semibold rounded-full hover:bg-white/20 transition-all duration-200"
-              aria-label="Learn more about AfyaConnect"
-            >
-              Learn More
-            </button>
+
+            <Link href="/therapy" passHref>
+              <button
+                className="px-8 py-3 bg-transparent border border-white text-white font-semibold rounded-full hover:bg-white/20 transition-all duration-200"
+                aria-label="Learn more about AfyaConnect"
+              >
+                Learn More
+              </button>
+            </Link>
           </div>
         </div>
-
       </div>
 
       {/* Subtle grid overlay */}
