@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import AboutUsSection from "@/components/AboutUsSection";
+import CareSection from "@/components/CareSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import Layout from "@/components/Layout";
 import { FaArrowLeft } from "react-icons/fa";
 import therapy1 from "/public/images/therapy1.jpg";
 import therapy2 from "/public/images/therapy2.jpg";
@@ -154,6 +157,9 @@ const TherapyPage = () => {
         </div>
       </section>
        <AboutUsSection />
+       <CareSection />
+       <TestimonialsSection />
+      <Layout />
     </main>
   );
 };
