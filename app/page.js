@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Services from "../components/Services";
 import WhyChooseUs from "../components/WhyChooseUs";
@@ -8,15 +9,10 @@ import HowItWorks from "../components/HowItWorks";
 import FAQs from "../components/FAQs";
 import Footer from "../components/Footer";
 
-
-
-
-
-
-
 export default function Home() {
   const [showSignup, setShowSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -108,7 +104,13 @@ export default function Home() {
           <div className="fixed inset-0 bg-red bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-sm">
               <h2 className="text-xl font-bold mb-4 text-yellow-600 text-center">Login</h2>
-              <form className="space-y-3">
+              <form
+                className="space-y-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  // Add your login logic here if needed
+                }}
+              >
                 <input
                   type="email"
                   placeholder="Email"
@@ -125,6 +127,15 @@ export default function Home() {
                 >
                   Login
                 </button>
+
+                {/* Login as Doctor button */}
+                <button
+                  type="button"
+                  onClick={() => router.push("/doctor-dashboard")}
+                  className="w-full mt-3 bg-blue-600 text-white rounded py-2 hover:bg-blue-700 transition"
+                >
+                  Login as Doctor
+                </button>
               </form>
               <button
                 onClick={() => setShowLogin(false)}
@@ -136,13 +147,19 @@ export default function Home() {
           </div>
         )}
       </main>
-       {/* Our Services Section */}
-      <Services />
+
+      {/* Our Services Section */}
+      <section id="services">
+        <Services />
+      </section>
+
       <WhyChooseUs />
       <HowItWorks />
       <FAQs />
-      <Footer />
 
+      <section id="contact">
+        <Footer />
+      </section>
     </>
   );
 }

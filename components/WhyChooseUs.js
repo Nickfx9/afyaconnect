@@ -62,12 +62,14 @@ export default function WhyChooseUs() {
           </ul>
 
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <button
-              className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-100 hover:shadow-lg transition-all duration-200"
-              aria-label="Start your telemedicine consultation"
-            >
-              Start Your Consultation
-            </button>
+            <Link href="/dashboard" passHref>
+              <button
+                className="px-8 py-3 bg-white text-blue-900 font-semibold rounded-full hover:bg-blue-100 hover:shadow-lg transition-all duration-200"
+                aria-label="Start your telemedicine consultation"
+              >
+                Start Your Consultation
+              </button>
+            </Link>
 
             <Link href="/therapy" passHref>
               <button

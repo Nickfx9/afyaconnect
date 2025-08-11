@@ -40,11 +40,11 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 text-white">
-          <Link href="/Home">HOME</Link>
-          <Link href="/about">ABOUT</Link>
-          <Link href="/services">SERVICES</Link>
-          <Link href="/testimonials">COMPANY</Link>
-          <Link href="/contact">CONTACT</Link>
+          <Link href="#home" scroll={false}>HOME</Link>
+          <Link href="#about" scroll={false}>ABOUT</Link>
+          <Link href="#services" scroll={false}>SERVICES</Link>
+          <Link href="#company" scroll={false}>COMPANY</Link>
+          <Link href="#contact" scroll={false}>CONTACT</Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -60,12 +60,14 @@ export default function Navbar() {
 
       {/* Mobile Menu Links */}
       {isMenuOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-4 text-white bg-black bg-opacity-80">
-          <Link href="/Home" onClick={() => setIsMenuOpen(false)}>HOME</Link>
-          <Link href="/about" onClick={() => setIsMenuOpen(false)}>ABOUT</Link>
-          <Link href="/services" onClick={() => setIsMenuOpen(false)}>SERVICES</Link>
-          <Link href="/testimonials" onClick={() => setIsMenuOpen(false)}>COMPANY</Link>
-          <Link href="/contact" onClick={() => setIsMenuOpen(false)}>CONTACT</Link>
+        <div className="md:hidden px-4 pb-4 text-white bg-blue bg-opacity-80">
+          <div className="flex flex-col space-y-4">
+            <Link href="#home" scroll={false} onClick={() => setIsMenuOpen(false)}>HOME</Link>
+            <Link href="#about" scroll={false} onClick={() => setIsMenuOpen(false)}>ABOUT</Link>
+            <Link href="#services" scroll={false} onClick={() => setIsMenuOpen(false)}>SERVICES</Link>
+            <Link href="#company" scroll={false} onClick={() => setIsMenuOpen(false)}>COMPANY</Link>
+            <Link href="#contact" scroll={false} onClick={() => setIsMenuOpen(false)}>CONTACT</Link>
+          </div>
         </div>
       )}
     </nav>

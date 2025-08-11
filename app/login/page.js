@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-yellow-100 px-4">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
@@ -27,6 +30,17 @@ export default function Login() {
             Login
           </button>
         </form>
+
+        <p className="mt-6 text-center">
+          <button
+            onClick={() => router.push("/doctor-dashboard")}
+            className="text-yellow-600 hover:underline"
+            type="button"
+          >
+            Login as Doctor
+          </button>
+        </p>
+
         <p className="mt-4 text-center text-sm text-gray-600">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="text-yellow-600 hover:underline">
