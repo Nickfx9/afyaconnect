@@ -1,0 +1,70 @@
+// app/api/forgotpassword/route.js
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+import transporter from "@/lib/email";
+import dbConnect from "@/lib/dbConnect";
+
+export async function POST(req) {
+  try {
+    const { db } = await dbConnect();
+    const { email } = await req.json();
+
+    if (!email) {
+      return NextResponse.json(
+        { error: "Email is required" },
+        { status: 400 }
+      );
+    }
+
+    // 1. Find user
+    const user = await db.collection("users").findOne({ email });
+    if (!user) {
+      return NextResponse.json(
+        { error: "No account found with that email" },
+        { status: 404 }
+      );
+    }
+
+    // 2. Create reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = Date.now() + 1000 * 60 * 15; // 15 minutes
+
+    await db.collection("users").updateOne(
+      { email },
+      {
+        $set: {
+          resetPasswordToken: resetToken,
+          resetPasswordExpiry: resetTokenExpiry,
+        },
+      }
+    );
+
+    // 3. Send reset email
+    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${resetToken}`;
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: email,
+      subject: "🔑 Reset Your AfyaConnect Password",
+      html: `
+        <p>Hello ${user.fullName || "User"},</p>
+        <p>You requested a password reset for your AfyaConnect account.</p>
+        <p>Click the link below to reset your password (valid for 15 minutes):</p>
+        <p><a href="${resetUrl}">${resetUrl}</a></p>
+        <br/>
+        <p>If you didn’t request this, please ignore this email.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return NextResponse.json({
+      message: "Password reset email sent successfully",
+    });
+  } catch (err) {
+    console.error("Forgot Password Error:", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again later." },
+      { status: 500 }
+    );
+  }
+}
