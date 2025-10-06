@@ -1,7 +1,7 @@
-// pages/forgot-password.js
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -25,23 +25,16 @@ export default function ForgotPassword() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await res.json().catch(() => ({}));
+      // Always show the same success message (security best practice)
+      setMessage({
+        type: "success",
+        text: "If this email is registered, we’ve sent a link to reset your password. Please check your inbox.",
+      });
 
-      if (res.ok) {
-        setMessage({
-          type: "success",
-          text: data.message || "If that email exists, a reset link was sent.",
-        });
-        setEmail("");
-      } else {
-        setMessage({
-          type: "error",
-          text: data.error || data.message || "Failed to send reset link.",
-        });
-      }
+      setEmail("");
     } catch (err) {
-      console.error("forgot-password fetch error:", err);
-      setMessage({ type: "error", text: "Network error. Try again." });
+      console.error("Forgot password fetch error:", err);
+      setMessage({ type: "error", text: "Network error. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -49,10 +42,17 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-semibold mb-4">Forgot Password</h1>
-        <p className="text-sm text-gray-600 mb-4">
-          Enter the email address for your account and we'll send a link to reset your password.
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md bg-white shadow-md rounded-xl p-6 border border-gray-100"
+      >
+        <h1 className="text-2xl font-semibold mb-2 text-gray-800 text-center">
+          Forgot Password
+        </h1>
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Enter your account email address, and we’ll send you a password reset link.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,8 +71,10 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 rounded-md text-white ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            className={`w-full py-2 rounded-md text-white font-medium transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {loading ? "Sending..." : "Send reset link"}
@@ -80,22 +82,23 @@ export default function ForgotPassword() {
         </form>
 
         {message && (
-          <div
-            className={`mt-4 p-3 rounded ${
-              message.type === "success" ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mt-4 p-3 rounded-lg text-center text-sm border ${
+              message.type === "success"
+                ? "bg-green-50 border-green-300 text-green-700"
+                : "bg-red-50 border-red-300 text-red-700"
             }`}
-            role="status"
           >
-            <p className={`text-sm ${message.type === "success" ? "text-green-800" : "text-red-800"}`}>
-              {message.text}
-            </p>
-          </div>
+            {message.text}
+          </motion.div>
         )}
 
-        <p className="text-xs text-gray-400 mt-4">
-          Tip: If you don't receive an email, check your spam folder or try again.
+        <p className="text-xs text-gray-400 mt-4 text-center">
+          Tip: If you don’t see the email, check your spam folder.
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

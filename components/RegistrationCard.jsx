@@ -47,7 +47,7 @@ export default function RegisterCard({ onClose }) {
         Cookies.set("email", data.user.email, { expires: 7 });
 
         setSuccess(true);
-        setMessage("Account created successfully! Redirecting...");
+        setMessage("✅ Account created successfully! Please wait...");
 
         setTimeout(() => router.push("/dashboard"), 1000);
       } else {
@@ -64,7 +64,6 @@ export default function RegisterCard({ onClose }) {
     if (typeof onClose === "function") {
       onClose();
     } else {
-      // fallback: reloads the page or hides modal if parent does not provide onClose
       if (window && window.location) window.location.reload();
     }
   };
@@ -145,7 +144,7 @@ export default function RegisterCard({ onClose }) {
             className="w-full py-3 mt-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 font-bold transition"
             disabled={success}
           >
-            {success ? "Redirecting..." : "Create Account"}
+            {success ? "Please wait..." : "Create Account"}
           </button>
         </form>
 

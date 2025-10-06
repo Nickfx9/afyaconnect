@@ -1,37 +1,73 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { motion } from "framer-motion";
 
-export default function ResetPasswordPage() {
+export default function ResetPassword() {
   const router = useRouter();
-  const { token } = router.query; // token from ?token=...
+  const { token } = router.query;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [strength, setStrength] = useState({ level: "", color: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     if (!token) {
-      setMessage({ type: "error", text: "Invalid reset link." });
+      setMessage({
+        type: "error",
+        text: "Invalid or missing reset link. Please request again.",
+      });
     }
   }, [token]);
+
+  function evaluateStrength(value) {
+    let level = "";
+    let color = "";
+    const strongRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    const mediumRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+    if (strongRegex.test(value)) {
+      level = "Strong";
+      color = "bg-green-500";
+    } else if (mediumRegex.test(value)) {
+      level = "Medium";
+      color = "bg-yellow-400";
+    } else if (value.length > 0) {
+      level = "Weak";
+      color = "bg-red-500";
+    } else {
+      level = "";
+      color = "";
+    }
+
+    setStrength({ level, color });
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage(null);
 
-    if (!password || password.length < 6) {
-      setMessage({ type: "error", text: "Password must be at least 6 characters." });
-      return;
-    }
     if (password !== confirmPassword) {
-      setMessage({ type: "error", text: "Passwords do not match." });
-      return;
+      return setMessage({ type: "error", text: "Passwords do not match." });
+    }
+
+    if (strength.level !== "Strong") {
+      return setMessage({
+        type: "error",
+        text: "Password must be strong (8+ chars, upper/lowercase, number, symbol).",
+      });
     }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/reset-password", {   // ✅ FIXED ENDPOINT
+      const res = await fetch("/api/resetpassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),
@@ -40,61 +76,123 @@ export default function ResetPasswordPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage({ type: "success", text: data.message || "Password reset successful!" });
+        setMessage({
+          type: "success",
+          text: "Password reset successful! You can now go back to login.",
+        });
         setPassword("");
         setConfirmPassword("");
-
-        // Redirect after success
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
       } else {
-        setMessage({ type: "error", text: data.error || "Failed to reset password." });
+        setMessage({
+          type: "error",
+          text: data.error || "Failed to reset password. Try again.",
+        });
       }
     } catch (err) {
-      console.error("reset-password error:", err);
-      setMessage({ type: "error", text: "Network error. Try again." });
+      setMessage({ type: "error", text: "Network error. Try again later." });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-semibold mb-4">Reset Password</h1>
-        <p className="text-sm text-gray-600 mb-4">Enter your new password below.</p>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#020617] via-[#0a2540] to-[#000000] text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(0,255,255,0.15),_transparent_50%),_radial-gradient(circle_at_bottom_right,_rgba(0,128,255,0.25),_transparent_50%)] animate-pulse"></div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block">
-            <span className="text-sm font-medium text-gray-700">New Password</span>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 w-full max-w-md bg-[#0a2540]/70 backdrop-blur-xl border border-cyan-400/60 shadow-[0_0_25px_rgba(0,255,255,0.3)] rounded-2xl p-8"
+      >
+        <h1 className="text-3xl font-semibold text-center mb-4 text-cyan-300 drop-shadow-lg">
+          Reset Your Password
+        </h1>
+        <p className="text-center text-sm text-cyan-100 mb-6">
+          Enter your new password below. Choose a strong one for security.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* New Password */}
+          <div className="relative">
+            <label className="text-sm font-medium text-cyan-100">
+              New Password
+            </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                evaluateStrength(e.target.value);
+              }}
               required
-              className="mt-1 block w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter new password"
+              className="mt-1 w-full rounded-md bg-[#000000]/40 border border-cyan-400/50 p-2 text-white focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none placeholder-gray-400 transition-all"
             />
-          </label>
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-8 text-cyan-200 text-sm font-semibold hover:text-cyan-400"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
 
-          <label className="block">
-            <span className="text-sm font-medium text-gray-700">Confirm Password</span>
+            {strength.level && (
+              <div className="mt-2">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs text-gray-300">
+                    Strength:{" "}
+                    <span className="font-semibold text-cyan-200">
+                      {strength.level}
+                    </span>
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div
+                    className={`h-2 ${strength.color} transition-all duration-500`}
+                    style={{
+                      width:
+                        strength.level === "Weak"
+                          ? "33%"
+                          : strength.level === "Medium"
+                          ? "66%"
+                          : "100%",
+                    }}
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <label className="text-sm font-medium text-cyan-100">
+              Confirm Password
+            </label>
             <input
-              type="password"
+              type={showConfirm ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
               required
-              className="mt-1 block w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Confirm new password"
+              className="mt-1 w-full rounded-md bg-[#000000]/40 border border-cyan-400/50 p-2 text-white focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none placeholder-gray-400 transition-all"
             />
-          </label>
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-2 top-8 text-cyan-200 text-sm font-semibold hover:text-cyan-400"
+            >
+              {showConfirm ? "Hide" : "Show"}
+            </button>
+          </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 rounded-md text-white ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            className={`w-full py-2 rounded-md text-white font-medium transition-all duration-300 ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-cyan-600 hover:bg-cyan-700 shadow-[0_0_15px_rgba(0,255,255,0.3)]"
             }`}
           >
             {loading ? "Resetting..." : "Reset Password"}
@@ -102,23 +200,30 @@ export default function ResetPasswordPage() {
         </form>
 
         {message && (
-          <div
-            className={`mt-4 p-3 rounded ${
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mt-4 p-4 rounded-xl text-center text-sm backdrop-blur-md shadow-lg ${
               message.type === "success"
-                ? "bg-green-50 border border-green-200"
-                : "bg-red-50 border border-red-200"
+                ? "bg-green-400/10 border border-green-400 text-green-300"
+                : "bg-red-500/20 border border-red-400 text-red-300"
             }`}
           >
-            <p
-              className={`text-sm ${
-                message.type === "success" ? "text-green-800" : "text-red-800"
-              }`}
-            >
-              {message.text}
-            </p>
-          </div>
+            <p className="mb-2">{message.text}</p>
+
+            {message.type === "success" && (
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(0,255,255,0.6)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => router.push("/login")}
+                className="mt-3 px-6 py-2 rounded-lg bg-cyan-600/80 hover:bg-cyan-500/90 text-white font-medium shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
+              >
+                Go Back to Login
+              </motion.button>
+            )}
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
