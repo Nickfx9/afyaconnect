@@ -34,7 +34,12 @@ export async function POST(req) {
         }
       );
 
-      const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${resetToken}`;
+      // ✅ Use correct base URL for both local and production
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+      const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+
       const mailOptions = {
         from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
         to: email,
