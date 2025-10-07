@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function ResetPassword() {
   const router = useRouter();
-  const { token } = router.query;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,10 +29,8 @@ export default function ResetPassword() {
   function evaluateStrength(value) {
     let level = "";
     let color = "";
-    const strongRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    const mediumRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    const mediumRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
     if (strongRegex.test(value)) {
       level = "Strong";
@@ -213,7 +212,10 @@ export default function ResetPassword() {
 
             {message.type === "success" && (
               <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(0,255,255,0.6)" }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 0 20px rgba(0,255,255,0.6)",
+                }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => router.push("/login")}
                 className="mt-3 px-6 py-2 rounded-lg bg-cyan-600/80 hover:bg-cyan-500/90 text-white font-medium shadow-[0_0_10px_rgba(0,255,255,0.4)] transition-all"
