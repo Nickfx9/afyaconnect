@@ -38,7 +38,8 @@ export async function POST(req) {
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-      const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+      // Updated link to point to /password-update
+      const resetUrl = `${baseUrl}/password-update?token=${resetToken}`;
 
       const mailOptions = {
         from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
