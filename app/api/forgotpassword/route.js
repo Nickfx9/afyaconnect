@@ -1,8 +1,8 @@
 // app/api/forgotpassword/route.js
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import transporter from "@/lib/email";
 import dbConnect from "@/lib/dbConnect";
+import nodemailer from "nodemailer";
 
 export async function POST(req) {
   try {
@@ -41,8 +41,18 @@ export async function POST(req) {
       // Updated link to point to /password-update
       const resetUrl = `${baseUrl}/password-update?token=${resetToken}`;
 
+      // ✅ Setup Nodemailer transporter (Gmail)
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      // ✅ Compose email
       const mailOptions = {
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        from: `"AfyaConnect" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "🔑 Reset Your AfyaConnect Password",
         html: `
@@ -55,6 +65,7 @@ export async function POST(req) {
         `,
       };
 
+      // ✅ Send Email
       await transporter.sendMail(mailOptions);
     }
 
