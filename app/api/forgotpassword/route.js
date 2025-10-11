@@ -39,7 +39,8 @@ export async function POST(req) {
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
       // Updated link to point to /password-update
-      const resetUrl = `${baseUrl}/password-update?token=${resetToken}`;
+     const resetUrl = `${baseUrl}/update-password?token=${resetToken}`;
+
 
       // ✅ Setup Nodemailer transporter (Gmail)
       const transporter = nodemailer.createTransport({
