@@ -246,3 +246,4 @@ export default function ResetPassword() {
 
 // ✅ Important for Vercel App Router (prevents 404)
 export const dynamic = "force-dynamic";
+// force rebuild
