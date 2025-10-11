@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "src": "/password-update", "dest": "/app/password-update/page.js" },
+    { "src": "/password-update/(.*)", "dest": "/app/password-update/page.js" }
+  ],
+  "rewrites": [
+    { "source": "/password-update", "destination": "/password-update" }
+  ]
+}
